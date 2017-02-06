@@ -1,0 +1,11 @@
+{ 
+	"graphs": [
+		{
+			"graph": {
+				"type": "2sat",
+				"label": "example 1",
+				"directed": true
+			}
+		}
+	]
+}

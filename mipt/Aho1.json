@@ -1,0 +1,51 @@
+{"algorithm" : {
+	"type" : "Aho",
+	"RightAnswer" : [
+			{"match" : {"pos" : 0, "length" : 1}},
+			{"match" : {"pos" : 0, "length" : 2}},
+			{"match" : {"pos" : 1, "length" : 1}},
+			{"match" : {"pos" : 0, "length" : 3}},
+			{"match" : {"pos" : 1, "length" : 2}},
+			{"match" : {"pos" : 2, "length" : 1}},
+			{"match" : {"pos" : 1, "length" : 3}},
+			{"match" : {"pos" : 2, "length" : 2}},
+			{"match" : {"pos" : 3, "length" : 1}},
+			{"match" : {"pos" : 2, "length" : 3}},
+			{"match" : {"pos" : 3, "length" : 2}},
+			{"match" : {"pos" : 4, "length" : 1}},
+			{"match" : {"pos" : 3, "length" : 3}},
+			{"match" : {"pos" : 4, "length" : 2}},
+			{"match" : {"pos" : 5, "length" : 1}},
+			{"match" : {"pos" : 4, "length" : 3}},
+			{"match" : {"pos" : 5, "length" : 2}},
+			{"match" : {"pos" : 6, "length" : 1}},
+			{"match" : {"pos" : 5, "length" : 3}},
+			{"match" : {"pos" : 6, "length" : 2}},
+			{"match" : {"pos" : 7, "length" : 1}},
+			{"match" : {"pos" : 6, "length" : 3}},
+			{"match" : {"pos" : 7, "length" : 2}},
+			{"match" : {"pos" : 8, "length" : 1}},
+			{"match" : {"pos" : 7, "length" : 3}},
+			{"match" : {"pos" : 8, "length" : 2}},
+			{"match" : {"pos" : 9, "length" : 1}},
+			{"match" : {"pos" : 8, "length" : 3}},
+			{"match" : {"pos" : 9, "length" : 2}},
+			{"match" : {"pos" : 10, "length" : 1}},
+			{"match" : {"pos" : 9, "length" : 3}},
+			{"match" : {"pos" : 10, "length" : 2}},
+			{"match" : {"pos" : 11, "length" : 1}},
+			{"match" : {"pos" : 10, "length" : 3}},
+			{"match" : {"pos" : 11, "length" : 2}},	
+			{"match" : {"pos" : 12, "length" : 1}},
+			{"match" : {"pos" : 11, "length" : 3}},
+			{"match" : {"pos" : 12, "length" : 2}},
+			{"match" : {"pos" : 13, "length" : 1}}
+			],
+	"string" : "aaaaaaaaaaaaaa",
+	"objects" : [
+		    {"str" : "a"}, {"str" : "aa"}, {"str" : "aaa"},
+		    {"str" : "b"}, {"str" : "bb"}
+		    ]
+	
+	       }
+}

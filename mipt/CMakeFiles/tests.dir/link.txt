@@ -1,0 +1,1 @@
+/usr/bin/c++   -O3 -DNDEBUG   CMakeFiles/tests.dir/test.cpp.o CMakeFiles/tests.dir/catch_inc.cpp.o  -o bin/tests  -L/home/glutolik/mipt/jsoncpp/lib -rdynamic bin/libagraph.so -ljsoncpp -Wl,-rpath,/home/glutolik/mipt/jsoncpp/lib:/home/glutolik/mipt/bin 

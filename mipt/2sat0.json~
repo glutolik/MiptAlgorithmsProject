@@ -1,0 +1,11 @@
+{"2sat":{
+	"type": "2sat",
+	"RightAnswer": "There is 1 or more solutions!",
+	"2sat": [
+		{ "first": {"label": "a", "neg": false},  "second": {"label": "b", "neg": true}},
+		{ "first": {"label": "c", "neg": true},  "second": {"label": "d", "neg": false}},
+		{ "first": {"label": "b", "neg": true},  "second": {"label": "d", "neg": false}}
+		]
+	}
+	
+}

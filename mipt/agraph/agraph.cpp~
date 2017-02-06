@@ -1,0 +1,162 @@
+#include "agraph.h"
+
+#include <iostream>
+#include "../jsoncpp/include/json/json.h"
+const int INF = 1000000000;
+
+//void getTest(std::string name, std::ifstream& in) {
+//    in.open("../2sat/tests/" + name, std::ifstream::in);
+//    if(!in)
+//        throw "No such test!";
+//}
+
+
+
+//////////////////////////////////////////////////////////////
+std::vector<bool> used;
+std::vector<int> order, comp;
+
+void dfs1 (int v, const std::vector<std::vector<std::pair<int, int>>>& g){
+	used[v] = true;
+	for (size_t i = 0; i < g[v].size(); ++i){
+		int to = g[v][i].first;
+		if (!used[to])
+			dfs1(to, g);
+	}
+	order.push_back(v);
+}
+
+void dfs2 (int v, int cl, const std::vector<std::vector<std::pair<int, int>>>& gt) {
+	comp[v] = cl;
+	for (size_t i = 0; i < gt[v].size(); ++i) {
+		int to = gt[v][i].first;
+		if (comp[to] == -1)
+			dfs2(to, cl, gt);
+	}
+}
+
+template<typename TNode, typename TEdge>
+void VGraph<TNode, TEdge>::sat2(){
+
+    	VGraph<TNode> gt = transpose();
+	int n = Vertices.size();
+	used.assign (n, false);
+	for (int i = 0; i < n; ++i){
+		if (!used[i])
+			dfs1(i, adjacencies);
+	}
+
+	comp.assign(n, -1);
+	for (int i = 0, j = 0; i < n; ++i) {
+		int v = order[n - i - 1];
+		if (comp[v] == -1)
+			dfs2(v, j++, gt.adjacencies);
+	}
+
+	for (int i=0; i<n; ++i){
+		if (comp[i] == comp[i^1]) {
+			std::cout << "NO SOLUTION!" << std::endl;
+			return;
+		}
+	}
+    std::cout << "THERE IS 1 OR MORE SOLUTIONS!" << std::endl;
+//    for (int i=0; i<n; ++i) {
+//		int ans = comp[i] > comp[i^1] ? i : i^1;
+//		std::cout << ans << std::endl;
+//	}
+
+}
+/////////////////////////////////////////////////////////////////
+template<typename TNode, typename TEdge>
+std::vector<std::pair<int, char>> VGraph<TNode,TEdge>::ShortestPath(){
+    int n = g.adjacencies.size();
+    int len;
+    char lastPath;
+	std::vector<int> dist(n, INF);
+	std::vector<std::pair<int, char>> parent(n);
+	dist[s] = 0;
+	std::vector<bool> used(n, false);
+	for (int i = 0; i < n; ++i) {
+		int v = -1;
+		for (int j = 0; j < n; ++j)
+			if (!used[j] && (v == -1 || dist[j] < dist[v]))
+				v = j;
+		if (dist[v] == INF)
+			break;
+		used[v] = true;
+
+		for (size_t j = 0; j < adjacencies[v].size(); ++j) {
+			int to = adjacencies[v][j].first;
+			if(lastPath == adjacencies[v][j].second.road.first){
+				len = min(0.8*adjacencies[v][j].second.road.second, adjacencies[v][j].second.railway.second);
+				lastPath = 0.8*adjacencies[v][j].second.road.second < adjacencies[v][j].second.railway.second ? adjacencies[v][j].second.road.first : adjacencies[v][j].second.railway.first;
+			}
+			else{
+                len = min(adjacencies[v][j].second.road.second, 0.8*adjacencies[v][j].second.railway.second);
+				lastPath = adjacencies[v][j].second.road.second < 0.8*adjacencies[v][j].second.railway.second ? adjacencies[v][j].second.road.first : adjacencies[v][j].second.railway.first;
+			}
+			if (dist[v] + len < dist[to]) {
+				dist[to] = dist[v] + len;
+				parent[to] = std::make_pair(v, lastPath);
+			}
+		}
+	}
+	return parent;
+}
+
+std::vector<std::pair<int, char>> RevivePath(const std::vector<std::pair<int, char>> parent, int t, int s){
+    std::vector<std::pair<int, char>> path;
+    char type;
+    for (int v = t; v != s; v = parent[v].first){
+        path.push_back(std::make_pair(v, parent[v].second));
+        type = parent[v].second;
+    }
+    path.push_back(std::make_pair(s, type));
+    std::reverse(path.begin(), path.end());
+    return path;
+}
+
+/* ваша реализация фабричного метода */
+AGraph* GraphFactory::makeGraph(Json::Value &root){
+    std::string AlgName = root["graphs"][0]["graph"]["type"].asString();
+    if(AlgName == "2sat"){
+        std::ifstream ifs;
+        Json::Value root;
+        Json::Reader reader;
+
+        //getTest(test, in);
+        ifs.open("/home/glutolik/mipt/2sat2.json", std::ifstream::in);
+        bool check = reader.parse(ifs, root);
+        if(!check)
+	    throw "ERROR! Bad json file!";
+
+        Json::Value g = root["2sat"];
+
+        std::vector<std::pair<Var, Var>> disj;
+
+        for(int i = 0; i < g.size(); ++i){
+            Var var1, var2;
+
+            var1.label = g[i]["first"]["label"].asString();
+            var1.neg = g[i]["first"]["neg"].asBool();
+
+            var2.label = g[i]["second"]["label"].asString();
+            var2.neg = g[i]["second"]["neg"].asBool();
+
+            disj.push_back(std::make_pair(var1, var2));
+        }
+
+        //sat2(edges);
+
+
+        return new AGraph( VGraph<Var>(disj) );
+    }
+    //else if(AlgName == "transport"{
+	
+    //}
+    else{
+        std::cout << "NOthing" << std::endl;
+        exit(0);
+    }
+
+}

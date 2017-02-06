@@ -1,0 +1,34 @@
+#include <iostream>
+#include <memory>
+
+class B {
+private:
+    int b;
+public:
+    B(int x) : b(x) {
+	std::cout << "Bconstructed" << std::endl;
+    }
+    ~B() {}
+};
+
+class C{
+private:
+    int c;
+public:
+    C(int y) : c(y) {}
+    ~C() {}
+};
+
+class A{
+private:
+    std::shared_ptr<B> b;
+    std::shared_ptr<C> c;
+public:
+    A(B l, C m) : b(new B(l)), c(new C(m)) {
+        std::cout << "Constructor" << std::endl;
+    }
+    ~A() {
+        std::cout << "Destructor" << std::endl;
+    }
+
+};

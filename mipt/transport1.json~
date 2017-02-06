@@ -1,0 +1,30 @@
+{"algorithm":{
+	"type": "transport",
+	"RightAnswer": "10.8",
+	"source" : 0,
+	"destination" : 3,
+	"graph": 
+		[
+		{ "edge": {"source": 0, "destination": 1},  
+		  "value": {"road": 1, 
+			    "railway" : 2}},
+
+		{ "edge": {"source": 1, "destination": 2},
+                  "value": {"road": 20,
+                            "railway" : 10}},
+
+		{ "edge": {"source": 0, "destination": 3}, 
+                  "value": {"road": 20, 
+                            "railway" : 20}},
+		
+		{ "edge": {"source": 2, "destination": 3}, 
+                  "value": {"road": 1, 
+                            "railway" : 1}},
+
+		{ "edge": {"source": 0, "destination": 2}, 
+                  "value": {"road": 50, 
+                            "railway" : 50}}
+		]
+	}
+	
+}

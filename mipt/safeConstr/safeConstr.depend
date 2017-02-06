@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1450390810 source:/home/glutolik/mipt/safeConstr/main.cpp
+	<iostream>
+	"safeConstr.h"
+
+1450689389 /home/glutolik/mipt/safeConstr/safeConstr.h
+	<iostream>
+	<memory>
+

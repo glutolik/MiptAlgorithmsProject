@@ -1,0 +1,10 @@
+{"algorithm":{
+	"type": "2sat",
+	"RightAnswer": "No solution!",
+	"2sat": [
+		{ "first": {"label": "a", "neg": false},  "second": {"label": "a", "neg": false}},
+		{ "first": {"label": "c", "neg": true},  "second": {"label": "d", "neg": false}},
+		{ "first": {"label": "a", "neg": true},  "second": {"label": "a", "neg": true}}
+		]
+	}
+}

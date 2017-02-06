@@ -1,0 +1,21 @@
+{"algorithm" : {
+	"type" : "Fenwick",
+	"RightAnswers" : [
+			 {"ans" : 1}, {"ans" : 5}, {"ans" : 6}
+			 ],
+	"xdim" : 3,
+	"ydim" : 3,
+	"array" : [
+		    [{"num" : 1}, {"num" : 2}, {"num" : 3}],
+		    [{"num" : 4}, {"num" : 5}, {"num" : 6}],
+		    [{"num" : 7}, {"num" : 8}, {"num" : 9}]
+		  ],
+	"numberOfQueries" : 3,
+	"queries" : [
+		    {"first" : { "x1" : 1, "y1" : 1}, "second" : { "x2" : 3, "y2" : 3 }},
+		    {"first" : { "x1" : 2, "y1" : 2}, "second" : { "x2" : 2, "y2" : 3 }},
+		    {"first" : { "x1" : 2, "y1" : 3}, "second" : { "x2" : 3, "y2" : 3 }}
+		    ]
+	
+	       }
+}

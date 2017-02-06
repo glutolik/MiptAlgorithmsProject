@@ -1,0 +1,19 @@
+{"algorithm" : {
+	"type" : "Aho",
+	"RightAnswer" : [
+			{"match" : {"pos" : 1, "length" : 3}},
+			{"match" : {"pos" : 1, "length" : 4}},
+			{"match" : {"pos" : 5, "length" : 4}},
+			{"match" : {"pos" : 9, "length" : 4}},
+			{"match" : {"pos" : 12, "length" : 4}},
+			{"match" : {"pos" : 15, "length" : 4}},
+			{"match" : {"pos" : 18, "length" : 4}}
+			],
+	"string" : "abcdcbcddbbbcccbbbcccbb",
+	"objects" : [
+		    {"str" : "abc"}, {"str" : "bcdc"}, {"str" : "cccb"},
+		    {"str" : "bcdd"}, {"str" : "bbbc"}
+		    ]
+	
+	       }
+}

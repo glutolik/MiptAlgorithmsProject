@@ -1,0 +1,1 @@
+/usr/bin/c++  -fPIC -O3 -DNDEBUG  -shared -Wl,-soname,libagraph.so -o ../bin/libagraph.so CMakeFiles/agraph.dir/agraph.cpp.o 

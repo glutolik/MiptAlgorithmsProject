@@ -1,0 +1,279 @@
+#ifndef AGRAPH
+#define AGRAPH
+
+#include <string>
+#include <memory>
+#include <cstdlib>
+#include <fstream>
+#include <vector>
+#include <iostream>
+#include "../jsoncpp/include/json/json.h"
+
+#include "agraph_export.h"
+
+/*
+это реализация паттерна type erasure
+задача - скрыть объекты разных классов с общим интерфейсом за одним типом данных с тем же самым интерфейсом
+решение - поскольку мы не можем менять структуру классов (они могут быть сторонними компонентами),
+то мы используем обертку над каждым объектом, делегирующую ему вызовы методов. Все обертки наследуются от
+одного класса, определяющего интерфейс.
+*/
+
+/*
+AGraph - обертка, скрывающая объекты за указателем.
+Контейнеры stl хранят объекты по значению, поэтому если размещать в них объекты GraphConcept напрямую,
+произойдет срезка. В данном случае она не особо нужна, так как в тестах можно использовать указатели.
+*/
+
+
+
+
+/* 2sat */
+struct Var {
+    std::string label;
+    bool neg;
+    Var() {
+        label = "";
+        neg = false;
+    }
+    Var(std::string s, bool b) {
+        label = s;
+        neg = b;
+    }
+    bool operator==(const Var& v){
+    if(label == v.label && (neg == v.neg))
+        return true;
+    else
+        return false;
+}
+
+};
+
+    void getTest(std::string, std::ifstream&);
+    bool sattest(std::string);
+    Var negation(const Var&);
+    bool findvar(const std::vector<Var>&, const Var&);
+    int findplace(std::vector<Var>&, const Var&);
+
+    Var negation(const Var& v){
+    Var nv = v;
+    if(v.neg){
+        nv.neg = false;
+        return nv;
+    }
+    nv.neg = true;
+    return nv;
+}
+
+bool findvar(const std::vector<Var>& g, const Var& v){
+    for(auto it : g){
+        if(it == v)
+            return true;
+    }
+    return false;
+}
+
+int findplace(std::vector<Var>& g, const Var& v){
+    for(int i = 0; i < g.size(); i++){
+        if(g[i] == v)
+            return i;
+    }
+    return -1;
+}
+/* 2sat */
+
+struct TValue {
+    std::pair<char, int> road;
+    std::pair<char, int> railway;
+};
+
+template<typename TNode, typename TEdge = int>
+class VGraph {
+public:
+    std::vector< std::vector<std::pair<int, TEdge>> > adjacencies;
+    std::vector<TNode> Vertices;
+    int algnum;
+
+
+
+
+    VGraph() = default;
+    VGraph<TNode, TEdge>(std::vector<std::vector<int>>& e, std::vector<TNode>& v):
+        adjacencies(e),
+        Vertices(v)
+    {}
+
+    VGraph<TNode, TEdge>(const VGraph<TNode, TEdge>&) = default;
+    explicit VGraph<TNode, TEdge>(const std::vector<std::pair<int, int> >&, const std::vector<TNode>&);
+    explicit VGraph<TNode, TEdge>(const std::vector<std::pair<Var, Var> >&);
+    explicit VGraph<TNode, TEdge>(const std::vector<std::vector<std::pair<int, TEdge>>>& g):
+	adjacencies(g)
+    {}
+
+    VGraph<TNode, TEdge> transpose();
+
+    std::vector<std::pair<int, char>> ShortestPath(const VGraph<TNode, TEdge>&, int s);
+    std::vector<std::pair<int, char>> RevivePath(const std::vector<std::pair<int, char>> parent, int t, int s);
+
+
+    void sat2();
+
+
+    bool do_algorithm(){
+        switch(algnum){
+            case 1 : //2sat
+                sat2();
+		break;
+            default : std::cout << "ERROR" << std::endl;
+	}
+    }
+
+
+};
+
+
+
+template<typename TNode, typename TEdge>
+VGraph<TNode, TEdge>::VGraph(const std::vector<std::pair<int, int> >& adj, const std::vector<TNode>& ver){
+    adjacencies.resize(ver.size() + 1);
+
+    for(auto it : adj){
+            adjacencies[it.first].push_back(std::make_pair(it.second, 0));
+        }
+    adjacencies.shrink_to_fit();
+    Vertices = ver;
+}
+
+template<typename TNode, typename TEdge>
+VGraph<TNode, TEdge>::VGraph(const std::vector<std::pair<Var, Var> >& disj){
+
+    std::vector<TNode> ver;
+    std::vector<std::vector<std::pair<int, int>>> edges;
+    int i = 0;
+
+    for(auto it : disj){
+        if(!findvar(ver, it.first)){
+            if(it.first.neg){
+                ver.push_back(it.first);
+                ver.push_back(negation(it.first));
+            }
+            else{
+                ver.push_back(negation(it.first));
+                ver.push_back(it.first);
+            }
+        }
+        if(!findvar(ver, it.second)){
+            if(it.second.neg){
+                ver.push_back(it.second);
+                ver.push_back(negation(it.second));
+            }
+            else{
+                ver.push_back(negation(it.second));
+                ver.push_back(it.second);
+            }
+        }
+    }
+    
+    edges.resize(ver.size() + 1);
+
+    for(auto it : disj){
+        int j = findplace(ver, negation(it.first));
+        int k = findplace(ver, negation(it.second));
+        if(j != -1 && k != -1){
+            edges[j].push_back({findplace(ver, it.second), 0});
+            edges[k].push_back({findplace(ver, it.first), 0});
+        }
+        else
+            std::cout << "Something went wrong! No such ver!" << std::endl;
+    }
+
+    adjacencies.resize(ver.size() + 1);
+
+    adjacencies = edges;
+
+    adjacencies.shrink_to_fit();
+    Vertices = ver;
+    algnum = 1;
+}
+
+template<typename TNode, typename TEdge>
+VGraph<TNode, TEdge> VGraph<TNode, TEdge>::transpose(){
+    VGraph<TNode> gt;	
+    gt.adjacencies.resize(adjacencies.size());
+    for(int i = 0; i < adjacencies.size(); i++){
+          for(auto it : adjacencies[i]){
+              gt.adjacencies[it.first].push_back({i, it.second});
+
+          }
+    }
+    return gt;
+}
+
+
+
+
+class AGraph {
+
+	/* GraphConcept - общий интерфейc обобщенного класса граф */
+    struct GraphConcept {
+        virtual bool algorithm() = 0;
+        virtual ~GraphConcept() {}
+    };
+
+	/*
+	GraphModel - реализация интерфейса на основе произвольного класса
+	При этом от класса требуется не явное соответсвие какому-либо интерфейсу,
+	а всего лишь наличие подходящих методов, иногда это называют неявной спецификацией.
+	Например, bool algorithm() может вызывать X object.do_algorithm(), если определено
+	приведение типа T::operator bool() и т.п.
+	*/
+    template<typename T>
+    struct GraphModel : GraphConcept {
+        GraphModel( const T& t ) : object( t ) {}
+        virtual bool algorithm() {
+            return object.do_algorithm();
+        }
+        virtual ~GraphModel() {}
+    private:
+        T object;
+    };
+
+	/* вот так можно восстановить объект */
+	/*
+	template<typename U>
+	U cast() const
+	{
+		if(typeid(U) != object->type_info())
+			throw std::runtime_error("Bad graph cast");
+		return static_cast<GraphModel<U>* >(object)->object;
+	}
+	*/
+
+private:
+    std::unique_ptr<GraphConcept> object;
+
+public:
+    template<typename T>
+    AGraph(const T& obj):object( new GraphModel<T>( obj ) ) {}
+
+    bool algorithm() {
+        return object->algorithm();
+    }
+};
+
+/* это паттерн фабричный метод, что-то вроде виртуального конструктора */
+/*
+атрибут PROJECT_EXPORT явно указывает, что этот интерфейс библиотеки доступен для вызова из другого места.
+без него под MSVC приложение не соберется
+*/
+class AGRAPH_EXPORT GraphFactory {
+public:
+    /* static AGraph* makeGraph(const std::string&, enum TASK); если без json */
+    static AGraph* makeGraph(Json::Value&);
+
+    virtual ~GraphFactory() = 0;
+private:
+    GraphFactory(){}
+};
+
+#endif
